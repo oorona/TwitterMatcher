@@ -2,10 +2,9 @@ import json
 import glob
 import re
 import string
-import nltk
-from lemmatizer.Lemmatizer import Lemmatizer
-from lemmatizer.ContractionExpander import ContractionExpander
-from lemmatizer.StopWorder import StopWorder
+from cleaner.Lemmatizer import Lemmatizer
+from cleaner.ContractionExpander import ContractionExpander
+from cleaner.StopWorder import StopWorder
 
 import sqlite3
 import configparser
@@ -115,7 +114,7 @@ class StreamCleaner:
         return ' '.join(con_tokens)
 
     def tokenize(self,text):
-        return nltk.word_tokenize(text)
+        return text.split()
 
     def lemmatize(self,tokens):
         return [self.lemma.lemmatize(t) for t in tokens]
@@ -263,12 +262,12 @@ class StreamCleaner:
             text=self.removePosessives(text)
             text=self.removeUnicodeSymbols(text)
             text=self.removePunctuations(text)
+            text=self.removeBlanks(text)
             tokens=self.tokenize(text)
             tokens=self.removeStopWords(tokens)
             tokens=self.lemmatize(tokens)
             tokens=self.removeShortWords(tokens)  
             text=' '.join(tokens)
-            text=self.removeBlanks(text)
             try:
                 self.startTransaction
                 self.insertTweet(id,text,origtext)
