@@ -1,0 +1,122 @@
+ain't	is not 
+amn't	am not
+aren't	are not
+can't   cannot
+cain't 	cannot
+'cause	because
+could've	could have
+couldn't	could not
+couldn't've	could not have
+daren't	dare not 
+daresn't	dare not
+dasn't	dare not
+didn't	did not
+doesn't	does not
+don't	do not 
+e'er	ever
+everyone's	everyone is
+finna	fixing to 
+gimme	give me
+gonna	going to
+gon't	go not 
+gotta	got to
+hadn't	had not
+hasn't	has not
+haven't	have not
+he'd	he had 
+he'll   he will
+he's	he is
+he've	he have
+how'd	how did 
+how'll	how will
+how're	how are
+how's   how is 
+i'd	    i would
+i'll    i will
+i'm i am
+i'm'a	i am about to
+i'm'o	i am going to
+i've	i have
+isn't	is not
+it'd	it would
+it'll	it will
+it's	it is
+let's	let us
+mayn't	may not
+may've	may have
+mightn't	might not
+might've	might have
+mustn't	must not
+mustn't've	must not have
+must've	must have
+needn't	need not
+ne'er	never
+o'clock	of the clock
+o'er	over
+ol'	old
+oughtn't	ought not
+'s	is, has, does, or us
+shalln't	shall not 
+shan't	shall not
+she'd	she would
+she'll	she will
+she's	she is
+should've	should have
+shouldn't	should not
+shouldn't've	should not have
+somebody's	somebody is
+someone's	someone is
+something's	something is
+that'll that will
+that're	that are
+that's	that is
+that'd	that would 
+there'd	there would
+there'll	there will
+there're	there are
+there's there is
+these're	these are
+they'd	they would
+they'll	they will
+they're	they are
+they've	they have
+this's	this is
+those're	those are
+'tis	it is
+'twas	it was
+ur  you are
+wasn't	was not
+we'd	we would
+we'd've	we would have
+we'll	we will
+we're	we are
+we've	we have
+weren't	were not
+what'd	what did
+what'll	what will
+what're	what are
+what's	what is 
+what've	what have
+when's	when is
+where'd	where did
+where're	where are
+where's	where is
+where've	where have
+which's	which is
+who'd	who would
+who'd've	who would have
+who'll	who will
+who're	who are
+who's	who is
+who've	who have
+why'd	why did
+why're	why are
+why's	why is
+won't	will not
+would've	would have
+wouldn't	would not
+y'all	you all
+you'd	you would
+you'll	you will
+you're	you are
+you've	you have
