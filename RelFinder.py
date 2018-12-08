@@ -20,6 +20,7 @@ class RelFinder:
     tokens_tweets_tokens_join=config['Sql']['tokens_tweets_tokens_join']
     tokens_select_all=config['Sql']['tokens_select_all']
     tokens_select_top_IDF=config['Sql']['tokens_select_top_IDF']
+    tokens_select_top_number=config['Sql']['tokens_select_top_number']
 
     def getTokenCount(self,token):
         cursor = self.dbconn.cursor()
@@ -131,6 +132,12 @@ class RelFinder:
         data=(token,threshold)
         cursor.execute(self.tokens_select_top_IDF,data)
         return cursor.fetchall()
+    
+    def getTopTokens(self,top_n_tokens):
+        cursor = self.dbconn.cursor()
+        data=[top_n_tokens]
+        cursor.execute(self.tokens_select_top_number,data)
+        return cursor.fetchall()
 
 
     def getMutualInformation(self,token1,token2,smooth=True):
@@ -180,13 +187,10 @@ class RelFinder:
                 mi=self.getMutualInformation(word,token[0],smooth)                
                 results.append((word,token[0],mi))
         
-        results.sort(key =lambda x:x[1],reverse=False)
-        results.sort(key =lambda x:x[2],reverse=True)
+        #results.sort(key =lambda x:x[1],reverse=False)
+        results.sort(key =lambda x:(x[2],x[1]),reverse=True)
 
-        
-        for i in range(top_n):
-            print (results[i])
-
+        return results[:top_n]
 
     def getAllMutualInformation(self,word, top_n,smooth=True):
         results= []
@@ -195,14 +199,23 @@ class RelFinder:
                 mi=self.getMutualInformation(word,token[0],smooth)                
                 results.append((word,token[0],mi))
         
-        results.sort(key =lambda x:x[1],reverse=False)
-        results.sort(key =lambda x:x[2],reverse=True)
+        results.sort(key =lambda x:(x[2],x[1]),reverse=True)
 
+        return results[:top_n]
+
+    def getTopTokensMutualInformation(self,top_n_tokens,top_n_results,threshold,smooth=True):
+        results= []
+        i=0
+        print("Start Processing of top {0} tokens".format(top_n_tokens))
+        for token in self.getTopTokens(top_n_tokens):
+            i+=1
+            print("Procesing {0} {1}/{2}".format(token[0],i,top_n_tokens))
+            res_token=self.getTopMutualInformation(token[0],top_n_results,threshold,smooth)                
+            results.extend(res_token)
         
-        for i in range(top_n):
-            print (results[i])
-
-
+        results.sort(key =lambda x:(x[2],x[0]),reverse=True)
+        return results[:top_n_results]
+        
     def getTopConditionalEntropy(self,word, top_n,smooth=True):
         results= []
         for token in self.getAllTokens():
@@ -212,6 +225,7 @@ class RelFinder:
         
         results.sort(key =lambda x:x[2],reverse=False)
         
-        for i in range(top_n):
-            print (results[i])
+        return results[:top_n]
+    
+  
 
