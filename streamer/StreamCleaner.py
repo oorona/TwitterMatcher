@@ -2,16 +2,15 @@ import json
 import glob
 import re
 import string
-from cleaner.Lemmatizer import Lemmatizer
-from cleaner.ContractionExpander import ContractionExpander
-from cleaner.StopWorder import StopWorder
-
 import sqlite3
 import configparser
 import datetime
 import math
 import traceback
-
+import collections
+from cleaner.Lemmatizer import Lemmatizer
+from cleaner.ContractionExpander import ContractionExpander
+from cleaner.StopWorder import StopWorder
 
 class StreamCleaner:
     files_loaded=0
@@ -199,23 +198,18 @@ class StreamCleaner:
             cursor.execute(self.usermentions_insert,data)
         
     def insertTokens(self,id,tokens):
-        cursor = self.dbconn.cursor()    
-        unique_tokens=list(set(tokens))
-        for token in unique_tokens:
-            data=[token]            
-            cursor.execute(self.tokens_select,data)
-            result=cursor.fetchone()
-            if result is None:
-                data=(token,1,0)
-                cursor.execute(self.tokens_insert,data)
-            else:
-                token_total_tweets=result[0]+1
-                data=(token_total_tweets,0,token)
-                cursor.execute(self.tokens_update,data)
+        cursor = self.dbconn.cursor()  
+        count_tokens=collections.Counter(tokens)
+                
+        for token in count_tokens:
+            data=(token,token)
+            cursor.execute(self.tokens_insert,data)
             
-            data=[token,id]
+            data=[token,id,count_tokens[token]]
             cursor.execute(self.tokens_tweets_insert,data)
-                       
+
+           
+
     def updateIDF(self):
         cursor = self.dbconn.cursor()
         cursor.execute(self.tweets_select_total)
@@ -232,43 +226,43 @@ class StreamCleaner:
         self.dbconn.execute("PRAGMA foreign_keys = ON")
 
     def endTransaction(self):
-        #self.updateIDF()        
         self.total_tweets +=1
 
         if self.total_tweets%self.batch_size == 0:
+            self.updateIDF()        
             self.dbconn.commit()
             self.batch_counter +=1
             print("Commiting batch {0}. Total Tweets ={1}".format(self.batch_counter,self.total_tweets))
 
     def loadTweet(self,tweet):
         if not self.isRetweeted(tweet):
-            id=tweet['id']
-            if not self.isExtended(tweet):
-                entities=self.getEntities(tweet)
-                text=self.getText(tweet)
-            else:
-                entities=self.getExtendedEntities(tweet)
-                text=self.getExtendedText(tweet)
-            origtext=text
-            text=self.removeHashtags(text,self.getEntitiesHashtags(entities))             
-            text=self.removeUrls(text,self.getEntitiesUrls(entities))            
-            if self.hasUrl(text):
-                text=self.removeUrl(text)
-            text=self.removeUserMentions(text,self.getEntitiesUserMentions(entities))             
-            text=self.removeMultiline(text)
-            text=self.makeLowerCase(text)
-            text=self.removeNumbers(text)
-            text=self.expandContractions(text)
-            text=self.removePosessives(text)
-            text=self.removeUnicodeSymbols(text)
-            text=self.removePunctuations(text)
-            text=self.removeBlanks(text)
-            tokens=self.tokenize(text)
-            tokens=self.removeStopWords(tokens)
-            tokens=self.lemmatize(tokens)
-            tokens=self.removeShortWords(tokens)  
-            text=' '.join(tokens)
             try:
+                id=tweet['id']
+                if not self.isExtended(tweet):
+                    entities=self.getEntities(tweet)
+                    text=self.getText(tweet)
+                else:
+                    entities=self.getExtendedEntities(tweet)
+                    text=self.getExtendedText(tweet)
+                origtext=text
+                text=self.removeHashtags(text,self.getEntitiesHashtags(entities))             
+                text=self.removeUrls(text,self.getEntitiesUrls(entities))            
+                if self.hasUrl(text):
+                    text=self.removeUrl(text)
+                text=self.removeUserMentions(text,self.getEntitiesUserMentions(entities))             
+                text=self.removeMultiline(text)
+                text=self.makeLowerCase(text)
+                text=self.removeNumbers(text)
+                text=self.expandContractions(text)
+                text=self.removePosessives(text)
+                text=self.removeUnicodeSymbols(text)
+                text=self.removePunctuations(text)
+                text=self.removeBlanks(text)
+                tokens=self.tokenize(text)
+                tokens=self.removeStopWords(tokens)
+                tokens=self.lemmatize(tokens)
+                tokens=self.removeShortWords(tokens)  
+                text=' '.join(tokens)
                 self.startTransaction
                 self.insertTweet(id,text,origtext)
                 self.insertHashtags(id,self.getEntitiesHashtags(entities))
@@ -277,6 +271,9 @@ class StreamCleaner:
                 self.insertTokens(id,tokens)
                 self.endTransaction()
             except sqlite3.IntegrityError:
+                print ("###################################################################################")
+                pass
+            except KeyError:
                 print ("###################################################################################")
                 pass
             except Exception as dberror:

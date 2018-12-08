@@ -27,7 +27,8 @@ create table tokens(id text not null primary key,
        idf FLOAT not null );  
 create table tokens_tweets (token_id text not null,
        tweet_id INTEGER not null,
+       token_number integer not null,
        FOREIGN KEY(tweet_id) REFERENCES tweets(id),
        FOREIGN KEY(token_id) REFERENCES tokens(id)); 
-
-create index w_t on tokens_tweets(token_id,tweet_id);
+create index w_t 
+    ON tokens_tweets(token_id,tweet_id); 

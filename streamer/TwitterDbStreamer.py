@@ -1,5 +1,5 @@
-from tweepy.streaming import StreamListener
 import json
+from tweepy.streaming import StreamListener
 from streamer.StreamCleaner import StreamCleaner
 
 class TweetDbStreamListener(StreamListener):
@@ -14,7 +14,10 @@ class TweetDbStreamListener(StreamListener):
         tweet = json.loads(data)
         self.loader.loadTweet(tweet)
         self.tweet_count+=1
-        print ("Tweets {0}/{1} batch {2} lang {3} text={4}".format(self.loader.total_tweets,self.tweet_count,self.loader.batch_counter,tweet["lang"],tweet["text"]))
+        try:
+            print ("Tweets {0}/{1} batch {2} lang {3} text={4}".format(self.loader.total_tweets,self.tweet_count,self.loader.batch_counter,tweet["lang"],tweet["text"]))
+        except KeyError:
+            pass
         return True
 
     def on_error(self, status):

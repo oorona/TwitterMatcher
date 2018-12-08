@@ -1,13 +1,12 @@
-#Import the necessary methods from tweepy library
-from tweepy import OAuthHandler
-from tweepy import Stream
 import json
 import configparser
 import datetime
-from pathlib import Path
 import os
 import glob
 import traceback
+from tweepy import OAuthHandler
+from tweepy import Stream
+from pathlib import Path
 from streamer.TwitterStreamer import TweetStreamListener
 from streamer.TwitterDbStreamer import TweetDbStreamListener
 

@@ -19,6 +19,7 @@ class RelFinder:
     tweets_select_total =config['Sql']['tweets_select_total']
     tokens_tweets_tokens_join=config['Sql']['tokens_tweets_tokens_join']
     tokens_select_all=config['Sql']['tokens_select_all']
+    tokens_select_top_IDF=config['Sql']['tokens_select_top_IDF']
 
     def getTokenCount(self,token):
         cursor = self.dbconn.cursor()
@@ -34,7 +35,10 @@ class RelFinder:
 
     def getTokensJoinCount(self,token1,token2):
         cursor = self.dbconn.cursor()
-        data=(token1,token2)            
+        if token1 < token2:
+            data=(token1,token2)            
+        else:
+             data=(token2,token1) 
         cursor.execute(self.tokens_tweets_tokens_join,data)
         return cursor.fetchone()[0]
 
@@ -122,6 +126,13 @@ class RelFinder:
         cursor.execute(self.tokens_select_all)
         return cursor.fetchall()
 
+    def getContextTokens(self,token,threshold):
+        cursor = self.dbconn.cursor()
+        data=(token,threshold)
+        cursor.execute(self.tokens_select_top_IDF,data)
+        return cursor.fetchall()
+
+
     def getMutualInformation(self,token1,token2,smooth=True):
         
         if smooth :
@@ -162,6 +173,21 @@ class RelFinder:
         
         return m00+m10+m01+m11
 
+    def getTopMutualInformation(self,word, top_n,threshold,smooth=True):
+        results= []
+        for token in self.getContextTokens(word,threshold):
+            if not token[0]==word:
+                mi=self.getMutualInformation(word,token[0],smooth)                
+                results.append((word,token[0],mi))
+        
+        results.sort(key =lambda x:x[1],reverse=False)
+        results.sort(key =lambda x:x[2],reverse=True)
+
+        
+        for i in range(top_n):
+            print (results[i])
+
+
     def getAllMutualInformation(self,word, top_n,smooth=True):
         results= []
         for token in self.getAllTokens():
@@ -169,12 +195,15 @@ class RelFinder:
                 mi=self.getMutualInformation(word,token[0],smooth)                
                 results.append((word,token[0],mi))
         
+        results.sort(key =lambda x:x[1],reverse=False)
         results.sort(key =lambda x:x[2],reverse=True)
+
         
         for i in range(top_n):
             print (results[i])
 
-    def getAllConditionalEntropy(self,word, top_n,smooth=True):
+
+    def getTopConditionalEntropy(self,word, top_n,smooth=True):
         results= []
         for token in self.getAllTokens():
             if not token[0]==word:

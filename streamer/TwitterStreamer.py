@@ -1,7 +1,8 @@
-from tweepy.streaming import StreamListener
 import os
 import json
 import datetime
+from tweepy.streaming import StreamListener
+
 
 class TweetStreamListener(StreamListener):
     tweet_count=0
