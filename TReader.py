@@ -24,6 +24,10 @@ access_secret_token =config['Twitter']['access_secret_token']
 config.read("./config/TReaderConfig.ini")
 batch_size=config['Data']['batch_size']
 mode=config['Data']['mode']
+keep_batch=config['Data']['keep_batch']
+trim_db=config['Data']['trim_db']
+
+
 
 for key in config['Filter']: 
     filterwords.append(config['Filter'][key])
@@ -35,11 +39,19 @@ file_count=0
 file_counter=0 
 path =config['Data']['path']
 filesize =config['Data']['filesize']
-
+# @BEGIN CaptureTweets @DESC Captures and saves tweets to db or offline file
+# @OUT twitter_file
+# @OUT onlinetweet 
 if __name__ == '__main__':
+    # @BEGIN ProcessTwitterStream @DESC Captures tweets to db or offline to file
+    # @OUT tweet
     if mode=='online':
+    # @END ProcessTwitterStream
+        # @BEGIN CaptureOnlineTweets @DESC Calls Object to insert tweets directly
+        # @IN tweet
+        # @OUT onlinetweet
         try:
-            tweetlis = TweetDbStreamListener(int(batch_size))
+            tweetlis = TweetDbStreamListener(int(batch_size),int(keep_batch),bool(trim_db))
             auth = OAuthHandler(api_key, api_secret_key)
             auth.set_access_token(access_token, access_secret_token)
             stream = Stream(auth, tweetlis)
@@ -53,7 +65,11 @@ if __name__ == '__main__':
             traceback.print_exc()
             print("Error found")
             quit(1) 
+        # @END CaptureOnlineTweets
     else:
+        # @BEGIN CreateOfflineFiles @DESC Creates Json files in a specific location
+        # @IN tweet
+        # @OUT twitter_file
         try:        
             filename ="tweets_"+str(datetime.date.today().strftime("%Y%m%d"))+"_"
             filename +=  str(file_counter).zfill(5)
@@ -91,3 +107,5 @@ if __name__ == '__main__':
             traceback.print_exc()
             print("Error found")
             quit(1)
+        # @END CreateOfflineFiles
+# @END CaptureTweets
