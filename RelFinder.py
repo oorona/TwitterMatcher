@@ -9,6 +9,8 @@ class RelFinder:
     tweet_number=0
     
     config = configparser.ConfigParser()
+
+
     config.read("./config/DbSettings.ini")
     db_file =config['Database']['db_file_name']
     dbconn = sqlite3.connect(db_file)
@@ -21,6 +23,9 @@ class RelFinder:
     tokens_select_all=config['Sql']['tokens_select_all']
     tokens_select_top_IDF=config['Sql']['tokens_select_top_IDF']
     tokens_select_top_number=config['Sql']['tokens_select_top_number']
+    tweets_select_total=config['Sql']['tweets_select_total']
+    tokens_select_all=config['Sql']['tokens_select_all']
+    tokens_update_idf=config['Sql']['tokens_update_idf']
 
     def getTokenCount(self,token):
         cursor = self.dbconn.cursor()
@@ -161,6 +166,8 @@ class RelFinder:
         if p1e0==0 or p2e0==0 or pje00==0 :
             m00=0
         else:
+            #print (token1+ " " +token2)
+            #print("p1e0={} p2e0={} pje00={}".format(p1e0,p2e0,pje00))
             m00=pje00*math.log2(pje00/(p1e0*p2e0))
         
         if p1e1==0 or p2e0==0 or pje10==0:
