@@ -4,11 +4,11 @@ from streamer.StreamCleaner import StreamCleaner
 
 class TweetDbStreamListener(StreamListener):
     tweet_count=0
-    loader = StreamCleaner(0)
+    #loader = StreamCleaner(0,0)
 
-    def __init__(self,batch_size):
+    def __init__(self,batch_size,keep_batch,trim_db):
         StreamListener.__init__(self,api=None)
-        self.loader = StreamCleaner(batch_size)
+        self.loader = StreamCleaner(batch_size,keep_batch,trim_db)
         
     def on_data(self, data):
         tweet = json.loads(data)
