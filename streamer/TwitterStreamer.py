@@ -17,22 +17,25 @@ class TweetStreamListener(StreamListener):
         self.file_count=file_counter
         
     def on_data(self, data):
-        filename ="tweets_"+str(datetime.date.today().strftime("%Y%m%d"))+"_"
-        file_number=str(self.file_count).zfill(5)
-        filename += file_number
-        
-        self.tweet_count += 1  
-        with open(self.path+"/"+filename+".json.load","a") as tf:
-            tf.write(data)
-        
-        if (self.tweet_count % self.tweet_block_size) == 0 :
-            self.tweet_count=0
-            self.file_count +=1
-            tf.close
-            os.rename(self.path+"/"+filename+".json.load",self.path+"/"+filename+".json")
+        try:
+            filename ="tweets_"+str(datetime.date.today().strftime("%Y%m%d"))+"_"
+            file_number=str(self.file_count).zfill(5)
+            filename += file_number
+            
+            self.tweet_count += 1  
+            with open(self.path+"/"+filename+".json.load","a") as tf:
+                tf.write(data)
+            
+            if (self.tweet_count % self.tweet_block_size) == 0 :
+                self.tweet_count=0
+                self.file_count +=1
+                tf.close
+                os.rename(self.path+"/"+filename+".json.load",self.path+"/"+filename+".json")
 
-        data = json.loads(data)
-        print ("file {0} tweet {1} lang {2} text={3}".format(file_number,self.tweet_count,data["lang"],data["text"]))
+            data = json.loads(data)
+            print ("file {0} tweet {1} lang {2} text={3}".format(file_number,self.tweet_count,data["lang"],data["text"]))            
+        except KeyError:
+            pass
         return True
 
     def on_error(self, status):
