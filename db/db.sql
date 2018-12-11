@@ -1,10 +1,12 @@
-drop index w_t;
+drop index tt_token_id;
+drop index tt_tweet_id;
 drop table tokens_tweets;
 drop table tokens;
 drop table usermentions;
 drop table hashtags;
 drop table urls;
 drop table tweets;
+drop table snapshots;
 
 
 create table tweets (id INTEGER PRIMARY KEY,
@@ -28,7 +30,13 @@ create table tokens(id text not null primary key,
 create table tokens_tweets (token_id text not null,
        tweet_id INTEGER not null,
        token_number integer not null,
-       FOREIGN KEY(tweet_id) REFERENCES tweets(id),
+       FOREIGN KEY(tweet_id) REFERENCES tweets(id) ON DELETE CASCADE,
        FOREIGN KEY(token_id) REFERENCES tokens(id)); 
-create index w_t 
-    ON tokens_tweets(token_id,tweet_id); 
+create table snapshots (id INTEGER PRIMARY KEY,
+        capture_time TEXT);
+create index tt_token_id 
+        ON tokens_tweets(token_id); 
+create index tt_tweet_id 
+        ON tokens_tweets(tweet_id);         
+create index t_capture 
+        ON tweets (capture_time);
