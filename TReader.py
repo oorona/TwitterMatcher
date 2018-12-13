@@ -9,6 +9,8 @@ from tweepy import Stream
 from pathlib import Path
 from streamer.TwitterStreamer import TweetStreamListener
 from streamer.TwitterDbStreamer import TweetDbStreamListener
+import sys, signal
+
 
 filterwords=[]
 filterlang=[]
@@ -25,7 +27,6 @@ config.read("./config/TReaderConfig.ini")
 batch_size=config['Data']['batch_size']
 mode=config['Data']['mode']
 keep_batch=config['Data']['keep_batch']
-trim_db=config['Data']['trim_db']
 
 
 
@@ -51,7 +52,7 @@ if __name__ == '__main__':
         # @IN tweet
         # @OUT onlinetweet
         try:
-            tweetlis = TweetDbStreamListener(int(batch_size),int(keep_batch),bool(trim_db))
+            tweetlis = TweetDbStreamListener(int(batch_size),int(keep_batch))
             auth = OAuthHandler(api_key, api_secret_key)
             auth.set_access_token(access_token, access_secret_token)
             stream = Stream(auth, tweetlis)
@@ -97,10 +98,10 @@ if __name__ == '__main__':
 
             clean_files =  glob.glob(path+'/*.load')
             for clean_file in clean_files:
-                print("Removing file {0}",format(clean_file))
+                print("\nRemoving file {0}",format(clean_file))
                 os.remove(clean_file)
 
-            print("Capture stopped")
+            print("\nCapture stopped")
             quit(0)
         except:
             stream.disconnect()
