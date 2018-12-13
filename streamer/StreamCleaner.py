@@ -62,14 +62,16 @@ class StreamCleaner:
     cont = ContractionExpander()
     stop = StopWorder()
 
-    def __init__(self,batch_size,keep_batch,trim_db):
+    def __init__(self,batch_size,keep_batch):
         self.create_db()
         self.batch_size=batch_size
         cursor=self.dbconn.cursor()
         cursor.execute(self.snapshots_select_count_all)
         self.batch_counter=cursor.fetchone()[0]+1
         self.keep_batch=keep_batch
-        self.trim_db=trim_db
+        cursor.execute(self.tweets_select_total)
+        result=cursor.fetchone()
+        self.total_tweets=result[0]
         self.trimData()
 
     def create_db(self):
@@ -532,11 +534,11 @@ class StreamCleaner:
         cursor = self.dbconn.cursor()
         cursor.execute(self.tweets_select_total)
         result=cursor.fetchone()
-        total_tweets=result[0]
+        self.total_tweets=result[0]
         cursor.execute(self.tokens_select_all)
         results=cursor.fetchall()
         for result in results:
-            data=(math.log2(total_tweets/result[1]),result[0])
+            data=(math.log2(self.total_tweets/result[1]),result[0])
             cursor.execute(self.tokens_update_idf,data)
     
     def trimData(self):              
@@ -547,9 +549,9 @@ class StreamCleaner:
         if snapshot_number > int(self.keep_batch):
             print("-----------------------------------------------------")
             print("Trimming database from {0} snaphots to {1}".format(snapshot_number,self.keep_batch))            
-            cursor.execute(self.pragma_on)
+            cursor.execute(self.pragma_on)            
             data=[int(self.keep_batch)]
-            cursor.execute(self.tweets_delete_older,data)
+            cursor.execute(self.tweets_delete_older,data)      
             cursor.execute(self.sql_changes)
             result=cursor.fetchone()
             print("Number of tweets deleted {0}".format(result[0]))
@@ -564,13 +566,12 @@ class StreamCleaner:
             cursor.execute(self.update_tokens_doc_number)            
             cursor.execute(self.sql_changes)
             result=cursor.fetchone()
-            print("Number of tokens updated {0}".format(result[0]))    
+            print("Number of tokens updated {0}".format(result[0]))
             cursor.execute(self.tokens_delete_older)
             cursor.execute(self.sql_changes)
             result=cursor.fetchone()
             print("Number of tokens deleted {0}".format(result[0]))
             print("-----------------------------------------------------")
-            self.batch_counter=int(self.keep_batch)+1
             self.updateIDF()
             self.dbconn.commit()
         else:
@@ -589,11 +590,14 @@ class StreamCleaner:
 
         if self.total_tweets%self.batch_size == 0:
             self.batch_counter +=1
-            if self.trim_db:
-                self.trimData()
+            self.createsnapshot()            
+            self.dbconn.commit()
+            self.trimData()
+            self.dbconn.commit()
             self.updateIDF()        
-            self.createsnapshot()
-            self.dbconn.commit()            
+            self.dbconn.commit()   
+            
+                    
             print("Commiting batch {0}. Total Tweets ={1}".format(self.batch_counter,self.total_tweets))
             
     
