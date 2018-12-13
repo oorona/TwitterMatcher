@@ -64,10 +64,8 @@ def update(frame):
         found=False
         if frame >scrollpoint:
                 token[1].axes.set_xlim(frame-scrollpoint,frame-scrollpoint+100)
-                token[2]=token[2][:scrollpoint]
-                token[3]=token[3][:scrollpoint]
-                print(len(token[2]))
-                print(len(token[3]))
+                token[2].pop(0)
+                token[3].pop(0)
                 token[1].set_data(token[2],token[3]) 
         for res in results:
             if token[0] == res [1]:  
@@ -94,8 +92,6 @@ def update(frame):
                     
                     for  j in range(len(token[3])-1):
                         token[3][j]=None
-                    if frame+1 != len(token[3]):
-                        print ("*********frame={} token len={}".format(frame+1,len(token[3])))
                     token[2].append(frame)
                     token[3].append(res[3]+1)    
                     token[1].set_data(token[2],token[3])                
@@ -104,13 +100,9 @@ def update(frame):
  
 
     for token in tokens:
-        #print(len(token[2]))
-        #print(len(token[3]))
         l=token[1]
         tt=tt+(l,)
-    #if total!=55:
-    #    print ("**************Not 55 {}".format(total))
-
+    
     return tt 
 
 ani = FuncAnimation(fig, update,interval=sleep*1000,init_func=init, blit=True)
