@@ -13,7 +13,7 @@ class RelFinder:
 
     config.read("./config/DbSettings.ini")
     db_file =config['Database']['db_file_name']
-    dbconn = sqlite3.connect(db_file)
+    dbconn = sqlite3.connect(db_file,20)
 
     
     tokens_select_token_count =config['Sql']['tokens_select_token_count']
@@ -166,8 +166,7 @@ class RelFinder:
         if p1e0==0 or p2e0==0 or pje00==0 :
             m00=0
         else:
-            #print (token1+ " " +token2)
-            #print("p1e0={} p2e0={} pje00={}".format(p1e0,p2e0,pje00))
+
             m00=pje00*math.log2(pje00/(p1e0*p2e0))
         
         if p1e1==0 or p2e0==0 or pje10==0:
@@ -194,8 +193,10 @@ class RelFinder:
                 mi=self.getMutualInformation(word,token[0],smooth)                
                 results.append((word,token[0],mi))
         
-        #results.sort(key =lambda x:x[1],reverse=False)
         results.sort(key =lambda x:(x[2],x[1]),reverse=True)
+
+        for i in range(len(results)):
+            results[i]=results[i]+(i,)
 
         return results[:top_n]
 
@@ -207,20 +208,22 @@ class RelFinder:
                 results.append((word,token[0],mi))
         
         results.sort(key =lambda x:(x[2],x[1]),reverse=True)
+        for i in range(len(results)):
+            results[i]=results[i]+(i,)
 
         return results[:top_n]
 
     def getTopTokensMutualInformation(self,top_n_tokens,top_n_results,threshold,smooth=True):
         results= []
-        i=0
-        print("Start Processing of top {0} tokens".format(top_n_tokens))
+        i=0        
         for token in self.getTopTokens(top_n_tokens):
-            i+=1
-            print("Procesing {0} {1}/{2}".format(token[0],i,top_n_tokens))
+            i+=1        
             res_token=self.getTopMutualInformation(token[0],top_n_results,threshold,smooth)                
             results.extend(res_token)
         
         results.sort(key =lambda x:(x[2],x[0]),reverse=True)
+        for i in range(len(results)):
+            results[i]=(results[i][0],results[i][1],results[i][2],i)
         return results[:top_n_results]
         
     def getTopConditionalEntropy(self,word, top_n,smooth=True):
