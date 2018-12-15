@@ -11,7 +11,7 @@ class RankLine(lines.Line2D):
     def set_figure(self, figure):
         self.text.set_figure(figure)
         lines.Line2D.set_figure(self, figure)
-
+    
     def set_transform(self, transform):
         texttrans = transform + mtransforms.Affine2D().translate(2, -5)
         self.text.set_transform(texttrans)

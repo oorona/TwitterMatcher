@@ -1,4 +1,3 @@
-import json
 import configparser
 import datetime
 import os
@@ -9,7 +8,6 @@ from tweepy import Stream
 from pathlib import Path
 from streamer.TwitterStreamer import TweetStreamListener
 from streamer.TwitterDbStreamer import TweetDbStreamListener
-import sys, signal
 
 
 filterwords=[]

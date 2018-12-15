@@ -1,10 +1,5 @@
-import timeit
 from RelFinder import RelFinder
 from streamer.StreamCleaner import StreamCleaner
-from timeit import default_timer as timer
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
 import time
 import sys, signal
 import argparse
@@ -21,11 +16,9 @@ signal.signal(signal.SIGINT, signal_handler)
 if __name__ == "__main__":
     
     relf = RelFinder()
-    start= timer()
     rownum="{:<5}{:<20}{:<20}{:<15}{:<10}"
     previous_results=()
     i=0
-
 
     parser = argparse.ArgumentParser(description='Program to load offline Tweets files to database')        
     parser.add_argument('-t','--threshold',default=100,type=int,help='Number of tokens to consider during IDF filtering')

@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import matplotlib.lines as lines
 from matplotlib.animation import FuncAnimation
 import matplotlib.cm as cm
 import itertools
@@ -8,14 +9,15 @@ import argparse
 
 
 tt=()
-#t=()
 tokens =[]
 new_tokens=[]
-yticks=[1,2,3,4,5,6,7,8,9,10]
+
 colors=[0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]
-i=0
-relf = RelFinder()
+framewidth=100
 scrollpoint=80
+xlabel='Seconds'
+Ylabel="Positions"
+relf = RelFinder()
 
 parser = argparse.ArgumentParser(description='Program to load offline Tweets files to database')        
 parser.add_argument('token', help='Token for similary estimation')
@@ -27,26 +29,35 @@ word = args ['token']
 threshold = args ['threshold']
 sleep = args['sleep']
 limit=args['limit']
+fig =plt.figure()
 
+
+yticks=[i for i in range(limit)]
+colors=[i/limit for i in range(limit)]
+ax = plt.axes(xlim=(0, framewidth*sleep),ylim=(limit +1 ,0))
+ax.set_frame_on(True)
+plt.xlabel(xlabel)
+plt.ylabel(Ylabel)
+plt.title("Top Syntagmatic Relationships for \n{}".format(word))
+plt.grid(True)
+
+colors = iter(cm.rainbow(colors))
 
 results=relf.getTopMutualInformation(word,limit,threshold,True)
 
-fig =plt.figure()
-ax = plt.axes(xlim=(0, 100),ylim=(11,0))
-colors = iter(cm.rainbow(colors))
 
 for res in results:
-    some = RankLine([0], [10-res[3]], animated=True, label=res[1],color=next(colors),lw=3)
-    i+=1   
-    ax.add_line(some)
-    tokens.append([res[1],some,[0],[res[3]+1]])
-plt.yticks(yticks)
+    line = RankLine([0], [limit-res[3]], label=res[1],color=next(colors),lw=3)
+    line = ax.add_line(line)
+    tokens.append([res[1],line,[0],[res[3]+1]])
+
 
 def init():
     tt=()
     global tokens
-    
+
     for token in tokens:
+        print(token)
         l=token[1]
         tt=tt+(l,)
 
@@ -63,20 +74,18 @@ def update(frame):
     for token in tokens:
         found=False
         if frame >scrollpoint:
-                token[1].axes.set_xlim(frame-scrollpoint,frame-scrollpoint+100)
-                token[2].pop(0)
-                token[3].pop(0)
-                token[1].set_data(token[2],token[3]) 
+            token[1].axes.set_xlim(frame-scrollpoint,frame-scrollpoint+framewidth)
+            token[2].pop(0)
+            token[3].pop(0)
+            token[1].set_data(token[2],token[3]) 
         for res in results:
             if token[0] == res [1]:  
                 token[2].append(frame)
-                token[3].append(res[3]+1)                
+                token[3].append(res[3]+1)      
                 token[1].set_data(token[2],token[3])                
                 found=True
         if not found:
-            print('token {} not found in results'.format(token[0]))                            
             tokenstoupdate.append(token[0])
-    print ("Total missing items {}".format(len(tokenstoupdate)))
     i=0
     for res in results:
         found=False
@@ -84,10 +93,8 @@ def update(frame):
             if res[1] == token [0]:
                 found=True
         if not found:
-            print('token {} not found in list'.format(res[1]))                            
             for token in tokens:
                 if token[0]==tokenstoupdate[i]:
-                    print ("Replacing {0} with {1}".format(token[0],res[1]))   
                     token[0]=res[1]
                     
                     for  j in range(len(token[3])-1):
@@ -97,13 +104,11 @@ def update(frame):
                     token[1].set_data(token[2],token[3])                
                     token[1].text.set_text(res[1])   
             i+=1
- 
-
+    
     for token in tokens:
         l=token[1]
         tt=tt+(l,)
-    
     return tt 
 
-ani = FuncAnimation(fig, update,interval=sleep*1000,init_func=init, blit=True)
+ani = FuncAnimation(fig, update,interval=sleep*1000, blit=False)
 plt.show()
