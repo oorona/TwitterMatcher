@@ -14,7 +14,7 @@ First we must capture the twitter feed. This is done by TReader.py. This module 
 
 All scripts to create database are located under `db/db.sql`. There is no need to create the database the application will create all necesary objects.
 
-#### Insert Clean data to database.
+#### Insert Clean data to database
 Once all the data has been cleaned and breaking into components each piece must be inserted into the database.
 This final step inserts all the data previously cleaned into a SQLite database
 
