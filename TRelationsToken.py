@@ -20,7 +20,7 @@ if __name__ == "__main__":
     previous_results=()
     i=0
 
-    parser = argparse.ArgumentParser(description='Program to load offline Tweets files to database')        
+    parser = argparse.ArgumentParser(description='Program to list top relationships with a token')        
     parser.add_argument('token', help='Token for similary estimation')
     parser.add_argument('-t','--threshold',default=100,type=int,help='Number of tokens to consider during IDF filtering')
     parser.add_argument('-s','--sleep', default=5,type=int,help='Number of seconds to sleep before doing next analysis')

@@ -20,7 +20,7 @@ xlabel='Loops'
 Ylabel='Rankings'
 relf = RelFinder()
 
-parser = argparse.ArgumentParser(description='Program to load offline Tweets files to database')        
+parser = argparse.ArgumentParser(description='Program to visualize top relationships with a token')        
 parser.add_argument('token', help='Token for similary estimation')
 parser.add_argument('-t','--threshold',default=100,type=int,help='Number of tokens to consider during IDF filtering')
 parser.add_argument('-s','--sleep', default=1,type=int,help='Number of seconds to sleep before doing next analysis')
