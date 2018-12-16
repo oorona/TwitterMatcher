@@ -387,10 +387,6 @@ Return a list of top n token with lowest condition entropy for a given token.
 ```Python
 def getTopConditionalEntropy(self,word, top_n,smooth=True):    
 ```
-#### 
-```Python
-    
-```
 
 ## Requirements 
 You must have Python 3 and pip installed on your computer. 
@@ -408,10 +404,10 @@ if using the Visualizer application
 - pip install matplolib
 
 ## Setup
-1.	Defined the tweet capture mode by editing mode parameter under  ./config/TReaderConfig.ini file. You can leave the default of online mode 
-2.	Set the term or terms you want to use to create your twitter feed by editing the Filter section under the ./config/TReaderConfig.ini file
-3.	Set your twitter application credentials under the TwitterCred.ini file
-4.	If you decided to your offline mode and store files on a folder you may need to edit the ./config/StreamerClearnerConfig.ini file.
+1.	Defined the tweet capture mode by editing mode parameter under  `config/TReaderConfig.ini` file. You can leave the default of online mode 
+2.	Set the term or terms you want to use to create your twitter feed by editing the Filter section under the `config/TReaderConfig.ini` file
+3.	Set your twitter application credentials under the `config/TwitterCred.ini` file
+4.	If you decided to your offline mode and store files on a folder you may need to edit the `config/StreamerClearnerConfig.ini` file.
 
 ## Data Capture
 1.To work on online mode, make sure that the property mode is set to online. See setup above.
