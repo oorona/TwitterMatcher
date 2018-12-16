@@ -184,7 +184,7 @@ def removeUserMentions(self,text,usermentions):
         return text    
 ```
 
-### Removing Hashtags
+#### Removing Hashtags
 Any reference to urls must be removed from the text since they are being inserted and manage independently.
 Removing this piece can be done using extracting the hashtags object and then using the indexes provided to remove the data.
 ```Python
