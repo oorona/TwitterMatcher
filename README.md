@@ -12,6 +12,8 @@ There are 3 main components to this application
 ### Data loader
 First we must capture the twitter feed. This is done by TReader.py. This module uses clases under the streamer folder to either save data online or offline. The data loading process users 2 classes that extend the tweepy streamListener class called TwitterStreamer for offline operation or TwitterDbStreamer for online operation. They also defined a new classes called TwiiterCleaner that is in charge of doing all the database cleaning operation during capture of the tweet. Data cleaning operation are done only at the moment data is stored in database. That mean that during offline mode operation data cleaning operation will be done only during data load. On online mode operation all data is clean before is loaded.
 
+All scripts to create database are located under `db/db.sql`. There is no need to create the database the application will create all necesary objects.
+
 #### Insert Clean data to database.
 Once all the data has been cleaned and breaking into components each piece must be inserted into the database.
 This final step inserts all the data previously cleaned into a SQLite database
@@ -51,7 +53,7 @@ def insertTokens(self,id,tokens):
             cursor.execute(self.tokens_tweets_insert,data)  
 ```
 
-Once the data is loaded a sqlite is created with all the data properly cleaned and normalized. You can see a ER diagram of the database under the folder/db/dber.gif file
+Once the data is loaded a sqlite is created with all the data properly cleaned and normalized. You can see a ER diagram of the database under the folder `db/dber.gif` file
 
 #### Tables
 The result of the script is a SQLite database what contains 6 different tables and their relationships.  There are 6 main tables/entities.  These tables together allow to execute all types of queries that can be used to run statistics operation over the number and frequency of terms on the tweets. Some of the data being extracted is probability of a token in collection, probability of join token in collection, IDF, Number of token in tweet, and number of times a token appears in the collection
@@ -118,7 +120,7 @@ Token_number|Integer|Total Number of occurrences of the token in that particular
 
 ### Data Cleaning
 
-The entire database cleaning process is conducted using python. There are multiple steps to clean the data, all of them are described below.
+The entire database cleaning process is conducted using python. There are multiple steps to clean the data, all of them are described below. All this steps are done by the StreamCleaner class.
 
 #### Filtering and classifying tweets
 Tweets must be identified to see if they are retweets or not. Retweets are eliminated during the process to avoid loading the same date multiple times to the database. If the tweet is extended tweet requires to access the data from a different data path.
@@ -131,7 +133,7 @@ def isRetweeted (self,tweet):
             return True
 ```
 Extended Tweets can be find using the extended tweet attribute.
-```
+```Python
 def isExtended (self,tweet):
         if "extended_tweet" not in tweet:
             return False
@@ -296,6 +298,99 @@ def removeShortWords(self,tokens):
 ```
 
 ### Relationship Finder
+
+Once the data has been cleaned and loaded all the sygntacmatic analysis calculations are completed by the Class RelFinder. This class provides multiple methods to calculate all the necesary values to implmente Mutual Information comparison using a KL divergence algorithm. This classes give you access to basic stats such as
+
+#### Token count
+Count of all the times a particular token apears in the db
+```Python
+def getTokenCount(self,token):
+```
+#### Token IDF
+IDF calculation directly from database
+```Python
+def getTokenIDF(self,token):
+```
+
+#### Total Number of Tweets
+Total number of tweets in datbase
+```Python
+def getTotalTweets(self):
+```
+
+#### Token Entropy
+The entropy for a token smoothing is enable by default
+```Python
+def getTokenEntropy(self,token,smooth=True):
+```
+
+####  Token Probability
+Probability of the token in that database
+```Python
+def getTokenProb(self,token):
+```
+
+#### Join Token Count
+Number of times 2 tokens appear together
+```Python
+def getTokensJoinCount(self,token1,token2):    
+```
+
+#### Conditional Entropy
+Conditional entropy for 2 given tokens, smoothin is enable by default
+```Python
+def getConditionalEntropy(self,token1,token2,smooth=True):    
+```
+
+#### Join Token Probability
+Probaility of 2 token appearing together in the database.
+```Python
+def getJoinTokenProb(self,token1,token2):    
+```
+
+#### All tokens
+Returns all token in the db
+```Python
+def getAllTokens(self):    
+```
+
+#### Context of Tokens
+Returns all context of a token limited by a threshold value
+```Python
+def getContextTokens(self,token,threshold):    
+```
+
+#### Mutual Information
+Returns the mutual information value for 2 given tokens. Smoothing is enabled by default
+```Python
+def getMutualInformation(self,token1,token2,smooth=True):
+```
+
+#### Top tokens
+Returns the top tokens considering the IDF and TF. List is limited by a number of tokens to return
+```Python
+def getTopTokens(self,top_n_tokens):    
+```
+
+#### Top Mutual information List
+Return a list of n tokens with higest mutual information for a given token. Limited by a threshold value
+```Python
+def getTopMutualInformation(self,word, top_n,threshold,smooth=True):
+```
+#### All Mutual Information
+Return a list of top n tokens in the entire database with highest mutual information. Limited by threshold value and number of tokens
+```Python
+def getTopTokensMutualInformation(self,top_n_tokens,top_n_results,threshold,smooth=True):
+```
+#### Top condition Entropy
+Return a list of top n token with lowest condition entropy for a given token.
+```Python
+def getTopConditionalEntropy(self,word, top_n,smooth=True):    
+```
+#### 
+```Python
+    
+```
 
 ## Requirements 
 You must have Python 3 and pip installed on your computer. 
