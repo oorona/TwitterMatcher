@@ -5,7 +5,7 @@ The application can work in 2 modes. In the online mode all tweets are capture a
 Most of the settings are configured by editing or modifying configuration files under config folder.
 The project was developed using Python 3 used of external libraries was reduce to minimal. The only library required is tweepy.  The project includes 4 samples applications that can used to have a sense of the capabilities of the packages. If the visualizer application is used, then matplolib will also be required for visualization.
 
-##Requirements 
+## Requirements 
 You must have Python 3 and pip installed on your computer. 
 Additionally, you will need 
 
@@ -13,20 +13,20 @@ Additionally, you will need
 if using the Visualizer application
 [Matplotlib](https://github.com/matplotlib/matplotlib)
 
-##Installation
+## Installation
 
 1.Clone this repository
 2.install
 -pip install tweepy
 -pip install matplolib
 
-##Setup
+## Setup
 1.	Defined the tweet capture mode by editing mode parameter under  ./config/TReaderConfig.ini file. You can leave the default of online mode 
 2.	Set the term or terms you want to use to create your twitter feed by editing the Filter section under the ./config/TReaderConfig.ini file
 3.	Set your twitter application credentials under the TwitterCred.ini file
 4.	If you decided to your offline mode and store files on a folder you may need to edit the ./config/StreamerClearnerConfig.ini file.
 
-##Functionality
+## Functionality
 1.To work on online mode, make sure that the property mode is set to online. See setup above.
 Execute
 ```
@@ -60,7 +60,7 @@ positional arguments:
 optional arguments:
   -h, --help  show this help message and exit
 ```
-##Usage
+## Usage
 
 To see the application working is better to use the online mode.
 
@@ -132,7 +132,7 @@ optional arguments:
   -l LIMIT, --limit LIMIT
                         Top number of tokens to display
 ```
-###	Visualizer to show all top relationships in the database.
+### Visualizer to show all top relationships in the database.
 ```
 python VisualizerAll.py -h
 usage: VisualizerAll.py [-h] [-t THRESHOLD] [-s SLEEP] [-l LIMIT]
