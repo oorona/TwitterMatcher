@@ -31,7 +31,11 @@ class RelFinder:
         cursor = self.dbconn.cursor()
         data=[token]            
         cursor.execute(self.tokens_select_token_count,data)
-        return cursor.fetchone()[0]
+        count=cursor.fetchone()[0]
+        if count is None:
+            return 0
+        else:
+            return count
 
     def getTokenIDF(self,token):
         cursor = self.dbconn.cursor()
@@ -194,11 +198,12 @@ class RelFinder:
                 results.append((word,token[0],mi))
         
         results.sort(key =lambda x:(x[2],x[1]),reverse=True)
+        results=results[:top_n]
 
         for i in range(len(results)):
             results[i]=results[i]+(i,)
 
-        return results[:top_n]
+        return results
 
     def getAllMutualInformation(self,word, top_n,smooth=True):
         results= []
@@ -215,16 +220,29 @@ class RelFinder:
 
     def getTopTokensMutualInformation(self,top_n_tokens,top_n_results,threshold,smooth=True):
         results= []
+        token0list=[]
+        token1list=[]
+        exists=False
         i=0        
         for token in self.getTopTokens(top_n_tokens):
             i+=1        
-            res_token=self.getTopMutualInformation(token[0],top_n_results,threshold,smooth)                
-            results.extend(res_token)
-        
-        results.sort(key =lambda x:(x[2],x[0]),reverse=True)
+            res_tokens=self.getTopMutualInformation(token[0],top_n_results,threshold,smooth)        
+            for token in res_tokens:
+                if token[0] in token1list:
+                    if token[1] in token0list:
+                        exists=True
+                
+                if not exists:
+                    token0list.append(token[0])
+                    token1list.append(token[1])
+                    results.append(token)
+                exists=False
+        results.sort(key =lambda x:(x[2],x[1]),reverse=True)
+        results=results[:top_n_results]
+
         for i in range(len(results)):
             results[i]=(results[i][0],results[i][1],results[i][2],i)
-        return results[:top_n_results]
+        return results
         
     def getTopConditionalEntropy(self,word, top_n,smooth=True):
         results= []
