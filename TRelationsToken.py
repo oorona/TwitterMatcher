@@ -24,15 +24,18 @@ if __name__ == "__main__":
     parser.add_argument('token', help='Token for similary estimation')
     parser.add_argument('-t','--threshold',default=100,type=int,help='Number of tokens to consider during IDF filtering')
     parser.add_argument('-s','--sleep', default=5,type=int,help='Number of seconds to sleep before doing next analysis')
-    parser.add_argument('-l','--limit',default=10,type=int, help='Top number of tokens to display')
+    parser.add_argument('-nt','--limit',default=10,type=int, help='Top number of tokens to display')
+    parser.add_argument('-l','--loops',default=5,type=int, help='Number loops to do analysis')
+
     args = vars(parser.parse_args())
     token = args ['token']
     threshold = args ['threshold']
     sleep = args['sleep']
     limit=args['limit']
+    loops=args['loops']
 
     try:
-        while i>=0 :
+        while i <loops :
             results=relf.getTopMutualInformation(token,limit,threshold,True)
             if len (results) >0:
                 if i==0:
@@ -58,4 +61,3 @@ if __name__ == "__main__":
                 exit (0)
     except KeyboardInterrupt:
         print('\nProgram ended!')
-
