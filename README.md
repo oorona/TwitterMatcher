@@ -15,10 +15,10 @@ if using the Visualizer application
 
 ## Installation
 
-1.Clone this repository
-2.install
--pip install tweepy
--pip install matplolib
+1. Clone this repository
+2. install
+- pip install tweepy
+- pip install matplolib
 
 ## Setup
 1.	Defined the tweet capture mode by editing mode parameter under  ./config/TReaderConfig.ini file. You can leave the default of online mode 
