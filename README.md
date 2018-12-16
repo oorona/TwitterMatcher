@@ -5,7 +5,7 @@ The application can work in 2 modes. In the online mode all tweets are capture a
 Most of the settings are configured by editing or modifying configuration files under config folder.
 The project was developed using Python 3 used of external libraries was reduce to minimal. The only library required is tweepy.  The project includes 4 samples applications that can used to have a sense of the capabilities of the packages. If the visualizer application is used, then matplolib will also be required for visualization.
 
-## Syntagmatic Relationship finders.
+## Syntagmatic Relationship finder
 
 There are 3 main components to this application
 
